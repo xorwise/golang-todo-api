@@ -12,17 +12,18 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewProfileRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, mux *http.ServeMux) {
+func NewUpdateUserRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, mux *http.ServeMux) {
 
 	ur := repository.NewUserRepository(db)
 	mw := middleware.JWTMiddleware{
 		Secret:     env.AccessTokenSecret,
-		Repository: ur,
+		Repository: repository.NewUserRepository(db),
 	}
-	sc := controller.ProfileController{
-		ProfileUsecase: usecase.NewProfileUsecase(ur, timeout),
-		Env:            env,
+	sc := controller.UpdateUserController{
+		UpdateUserUsecase: usecase.NewUpdateUserUsecase(ur, timeout),
+		Env:               env,
 	}
 
-	mux.Handle("GET /profile", mw.LoginRequired(http.HandlerFunc(sc.GetProfile)))
+	mux.Handle("PUT /profile", mw.LoginRequired(http.HandlerFunc(sc.Update)))
+
 }

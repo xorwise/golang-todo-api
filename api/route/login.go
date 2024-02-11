@@ -17,6 +17,6 @@ func NewLoginRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, mux 
 		LoginUsecase: usecase.NewLoginUsecase(ur, timeout),
 		Env:          env,
 	}
-	mux.HandleFunc("/login", sc.Login)
+	mux.HandleFunc("POST /login", sc.Login)
 
 }

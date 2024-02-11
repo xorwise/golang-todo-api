@@ -11,7 +11,8 @@ import (
 )
 
 type JWTMiddleware struct {
-	Secret string
+	Secret     string
+	Repository domain.UserRepository
 }
 
 type userContextKey string
@@ -50,6 +51,11 @@ func (j *JWTMiddleware) LoginRequired(next http.Handler) http.Handler {
 		}
 
 		id := claims.ID
+		_, err = j.Repository.GetByID(r.Context(), id)
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 		email := claims.Email
 
 		ctx := context.WithValue(r.Context(), UserIDKey, id)

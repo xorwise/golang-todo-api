@@ -1,6 +1,6 @@
 module github.com/xorwise/golang-todo-api
 
-go 1.21.6
+go 1.22.0
 
 require (
 	github.com/golang-jwt/jwt/v4 v4.5.0

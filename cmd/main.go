@@ -9,10 +9,9 @@ import (
 )
 
 func main() {
-	app := bootstrap.App()
 	env := bootstrap.NewEnv()
 
-	db := app.Database
+	db := bootstrap.NewDatabaseConnection(env)
 	err := bootstrap.MigrateDatabase(db)
 	if err != nil {
 		log.Fatal(err)

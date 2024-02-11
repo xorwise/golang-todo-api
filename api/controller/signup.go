@@ -34,7 +34,7 @@ func (sc *SignUpController) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	encryptedPassword, err := bcrypt.GenerateFromPassword(
-		[]byte(r.FormValue("password")),
+		[]byte(signUpRequest.Password),
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
@@ -43,12 +43,12 @@ func (sc *SignUpController) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.Form.Set("password", string(encryptedPassword))
+	signUpRequest.Password = string(encryptedPassword)
 
 	user := domain.User{
-		Name:     r.FormValue("name"),
-		Email:    r.FormValue("email"),
-		Password: r.FormValue("password"),
+		Name:     signUpRequest.Name,
+		Email:    signUpRequest.Email,
+		Password: signUpRequest.Password,
 	}
 
 	err = sc.SignUpUsecase.Create(ctx, &user)

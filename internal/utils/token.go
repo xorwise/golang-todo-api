@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v4"
@@ -17,7 +16,6 @@ func CreateAccessToken(user *domain.User, secret string, expiry int) (accessToke
 			ExpiresAt: jwt.NewNumericDate(exp),
 		},
 	}
-	fmt.Println(secret)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	t, err := token.SignedString([]byte(secret))
 	if err != nil {

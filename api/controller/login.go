@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/xorwise/golang-todo-api/bootstrap"
@@ -20,6 +21,8 @@ func (lc *LoginController) Login(w http.ResponseWriter, r *http.Request) {
 
 	var loginRequest domain.LoginRequest
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
+	fmt.Println(loginRequest)
+
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
@@ -30,6 +33,7 @@ func (lc *LoginController) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: "user not found"})
+		return
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginRequest.Password))

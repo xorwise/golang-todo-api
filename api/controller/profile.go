@@ -15,6 +15,7 @@ type ProfileController struct {
 }
 
 func (pc *ProfileController) GetProfile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	userID, ok := r.Context().Value(middleware.UserIDKey).(uint)
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)

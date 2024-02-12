@@ -9,6 +9,7 @@ import (
 	"github.com/xorwise/golang-todo-api/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func NewDatabaseConnection(env *Env) *gorm.DB {
@@ -25,7 +26,9 @@ func NewDatabaseConnection(env *Env) *gorm.DB {
 
 	dbUrl := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", dbHost, dbPort, dbUser, dbName, dbPass)
 
-	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		log.Fatal(err)
 	}

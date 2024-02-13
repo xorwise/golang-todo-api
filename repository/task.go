@@ -19,10 +19,10 @@ func (tr *taskRepository) Create(c context.Context, task *domain.Task) error {
 	return tr.db.WithContext(c).Create(task).Error
 }
 
-func (tr *taskRepository) FetchByUserID(c context.Context, userID uint) ([]domain.Task, error) {
+func (tr *taskRepository) FetchByUserID(c context.Context, userID uint, offset int, limit int) ([]domain.Task, error) {
 	var tasks []domain.Task
-	if err := tr.db.WithContext(c).Where("user_id = ?", userID).Find(&tasks).Error; err != nil {
-		return nil, err
+	if err := tr.db.WithContext(c).Where("user_id = ?", userID).Order("id desc").Offset(offset).Limit(limit).Find(&tasks).Error; err != nil {
+		return tasks, err
 	}
 	return tasks, nil
 }

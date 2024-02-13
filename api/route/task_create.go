@@ -15,7 +15,7 @@ import (
 func NewCreateTaskRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, mux *http.ServeMux) {
 	mw := middleware.JWTMiddleware{Secret: env.AccessTokenSecret, Repository: repository.NewUserRepository(db)}
 	tr := repository.NewTaskRepository(db)
-	tc := controller.TaskController{
+	tc := controller.CreateTaskController{
 		TaskUsecase: usecase.NewTaskUsecase(tr, timeout),
 		Env:         env,
 	}

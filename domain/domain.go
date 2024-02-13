@@ -1,6 +1,6 @@
 package domain
 
-var Models = []interface{}{
+var Models = []any{
 	&User{},
 	&Task{},
 }

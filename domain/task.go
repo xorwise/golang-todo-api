@@ -16,24 +16,11 @@ type Task struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	UserID      uint
-	User        User
-}
-
-type CreateTaskRequest struct {
-	Title       string
-	Description string
-	Deadline    time.Time
-}
-
-type UpdateTaskRequest struct {
-	Title       string
-	Description string
-	Deadline    time.Time
 }
 
 type TaskRepository interface {
 	Create(c context.Context, task *Task) error
-	FetchByUserID(c context.Context, userID uint) ([]Task, error)
+	FetchByUserID(c context.Context, userID uint, offset int, limit int) ([]Task, error)
 	GetByID(c context.Context, id uint) (Task, error)
 	Update(c context.Context, task *Task) error
 	Delete(c context.Context, id uint) error
@@ -41,8 +28,7 @@ type TaskRepository interface {
 
 type TaskUsecase interface {
 	Create(c context.Context, task *Task) error
-	FetchByUser(c context.Context, userID uint) ([]Task, error)
+	Fetch(c context.Context, req FetchTaskRequest) ([]Task, error)
 	GetByID(c context.Context, id uint) (Task, error)
 	Update(c context.Context, task *Task, req *UpdateTaskRequest) error
-	Delete(c context.Context, id uint) error
 }

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/xorwise/golang-todo-api/api/middleware"
@@ -23,12 +24,12 @@ func (uc *UpdateUserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, handler, err := r.FormFile("avatar")
-	if err != nil {
+	fmt.Println(file, handler, err)
+	if err != nil && file != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
 		return
 	}
-	defer file.Close()
 
 	id, ok := r.Context().Value(middleware.UserIDKey).(uint)
 	if !ok {
@@ -43,11 +44,15 @@ func (uc *UpdateUserController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileString, err := uc.UpdateUserUsecase.UploadAvatar(r.Context(), id, file, handler)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
-		return
+	var fileString string
+	if file != nil {
+		fileString, err = uc.UpdateUserUsecase.UploadAvatar(r.Context(), id, file, handler)
+		defer file.Close()
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
+			return
+		}
 	}
 
 	name, email := r.FormValue("name"), r.FormValue("email")
@@ -57,11 +62,19 @@ func (uc *UpdateUserController) Update(w http.ResponseWriter, r *http.Request) {
 		Avatar: &fileString,
 	}
 
-	err = uc.UpdateUserUsecase.Update(r.Context(), &user, &userRequest)
+	updatedUser, err := uc.UpdateUserUsecase.Update(r.Context(), &user, &userRequest)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
 		return
 	}
 
+	updateResponse := domain.UpdateUserResponse{
+		ID:     updatedUser.ID,
+		Name:   updatedUser.Name,
+		Email:  updatedUser.Email,
+		Avatar: *updatedUser.Avatar,
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(updateResponse)
 }

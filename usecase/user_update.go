@@ -23,7 +23,7 @@ func NewUpdateUserUsecase(ur domain.UserRepository, timeout time.Duration) domai
 	}
 }
 
-func (uu *updateUserUsecase) Update(c context.Context, user *domain.User, req *domain.UpdateUserRequest) error {
+func (uu *updateUserUsecase) Update(c context.Context, user *domain.User, req *domain.UpdateUserRequest) (*domain.User, error) {
 	ctx, cancel := context.WithTimeout(c, uu.timeout)
 	defer cancel()
 	if req.Name != nil {
@@ -37,7 +37,7 @@ func (uu *updateUserUsecase) Update(c context.Context, user *domain.User, req *d
 	}
 
 	err := uu.userRepository.Update(ctx, user)
-	return err
+	return user, err
 }
 
 func (uu *updateUserUsecase) UploadAvatar(c context.Context, id uint, data multipart.File, handler *multipart.FileHeader) (string, error) {

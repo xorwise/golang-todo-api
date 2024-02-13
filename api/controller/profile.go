@@ -22,13 +22,19 @@ func (pc *ProfileController) GetProfile(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	profile, err := pc.ProfileUsecase.GetProfileByID(r.Context(), userID)
+	user, err := pc.ProfileUsecase.GetProfileByID(r.Context(), userID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(err)
 		return
 	}
 
+	profileResponse := domain.ProfileResponse{
+		ID:     user.ID,
+		Name:   user.Name,
+		Email:  user.Email,
+		Avatar: *user.Avatar,
+	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(profile)
+	json.NewEncoder(w).Encode(profileResponse)
 }

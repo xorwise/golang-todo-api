@@ -25,15 +25,16 @@ func (tu *taskUsecase) Create(c context.Context, task *domain.Task) error {
 	return tu.taskRepository.Create(ctx, task)
 }
 
-func (tu *taskUsecase) FetchByUser(c context.Context, userID uint) ([]domain.Task, error) {
+func (tu *taskUsecase) Fetch(c context.Context, req domain.FetchTaskRequest) ([]domain.Task, error) {
 	ctx, cancel := context.WithTimeout(c, tu.timeout)
 	defer cancel()
-	return tu.taskRepository.FetchByUserID(ctx, userID)
+	return tu.taskRepository.FetchByUserID(ctx, req.UserID, req.Offset, req.Limit)
 }
 
 func (tu *taskUsecase) GetByID(c context.Context, id uint) (domain.Task, error) {
 	ctx, cancel := context.WithTimeout(c, tu.timeout)
 	defer cancel()
+
 	return tu.taskRepository.GetByID(ctx, id)
 }
 
@@ -52,10 +53,4 @@ func (tu *taskUsecase) Update(c context.Context, task *domain.Task, req *domain.
 	}
 
 	return tu.taskRepository.Update(ctx, task)
-}
-
-func (tu *taskUsecase) Delete(c context.Context, id uint) error {
-	ctx, cancel := context.WithTimeout(c, tu.timeout)
-	defer cancel()
-	return tu.taskRepository.Delete(ctx, id)
 }

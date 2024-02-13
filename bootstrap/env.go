@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"log"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -19,6 +20,8 @@ type Env struct {
 	RefreshTokenSecret string
 	RefreshTokenExpiry int
 	ContextTimeout     time.Duration
+	ClientChannels     map[uint]chan string
+	Mu                 sync.Mutex
 }
 
 func NewEnv() *Env {
@@ -38,6 +41,8 @@ func NewEnv() *Env {
 		RefreshTokenSecret: os.Getenv("REFRESH_TOKEN_SECRET"),
 		RefreshTokenExpiry: 672,
 		ContextTimeout:     10 * time.Second,
+		ClientChannels:     make(map[uint]chan string),
+		Mu:                 sync.Mutex{},
 	}
 	return env
 

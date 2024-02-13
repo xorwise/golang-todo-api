@@ -54,3 +54,10 @@ func (tu *taskUsecase) Update(c context.Context, task *domain.Task, req *domain.
 
 	return tu.taskRepository.Update(ctx, task)
 }
+
+func (tu *taskUsecase) Delete(c context.Context, task *domain.Task) error {
+	ctx, cancel := context.WithTimeout(c, tu.timeout)
+	defer cancel()
+
+	return tu.taskRepository.Delete(ctx, task.ID)
+}

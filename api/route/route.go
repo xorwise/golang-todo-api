@@ -17,5 +17,10 @@ func Setup(env *bootstrap.Env, timeout time.Duration, db *gorm.DB, mux *http.Ser
 	NewProfileRouter(env, timeout, db, mux)
 	NewUpdateUserRouter(env, timeout, db, mux)
 	NewCreateTaskRouter(env, timeout, db, mux)
+	NewFetchTaskRouter(env, timeout, db, mux)
+	NewUpdateTaskRouter(env, timeout, db, mux)
+	NewDeleteTaskRouter(env, timeout, db, mux)
 
+	// Websocket routes
+	NewTaskWebsocketRouter(env, timeout, db, mux)
 }

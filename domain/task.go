@@ -31,4 +31,5 @@ type TaskUsecase interface {
 	Fetch(c context.Context, req FetchTaskRequest) ([]Task, error)
 	GetByID(c context.Context, id uint) (Task, error)
 	Update(c context.Context, task *Task, req *UpdateTaskRequest) error
+	Delete(c context.Context, task *Task) error
 }

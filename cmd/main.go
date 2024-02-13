@@ -6,6 +6,7 @@ import (
 
 	"github.com/xorwise/golang-todo-api/api/route"
 	"github.com/xorwise/golang-todo-api/bootstrap"
+	"github.com/xorwise/golang-todo-api/internal/worker"
 )
 
 func main() {
@@ -18,10 +19,12 @@ func main() {
 	}
 	defer bootstrap.CloseDatabaseConnection(db)
 
+	go worker.CheckDeadlines(env, db)
 	timeout := env.ContextTimeout
+
 	mux := http.NewServeMux()
 
 	route.Setup(env, timeout, db, mux)
 
-	log.Fatal(http.ListenAndServe("localhost:8080", mux))
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }

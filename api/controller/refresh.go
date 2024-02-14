@@ -57,7 +57,7 @@ func (rc *RefreshController) Refresh(w http.ResponseWriter, r *http.Request) {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
+
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(refreshResponse)
-
 }

@@ -1,13 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/xorwise/golang-todo-api/api/middleware"
 	"github.com/xorwise/golang-todo-api/bootstrap"
 	"github.com/xorwise/golang-todo-api/domain"
-	"golang.org/x/net/websocket"
 )
 
 type TaskWebsocketController struct {
@@ -15,11 +14,14 @@ type TaskWebsocketController struct {
 	Env         *bootstrap.Env
 }
 
-func (tc *TaskWebsocketController) HandleConnection(ws *websocket.Conn) {
-	fmt.Println("handle connection")
-	userID, ok := ws.Request().Context().Value(middleware.UserIDKey).(uint)
+func (tc *TaskWebsocketController) HandleConnection(w http.ResponseWriter, r *http.Request) {
+	conn, err := tc.Env.Upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uint)
 	if !ok {
-		ws.WriteClose(http.StatusUnauthorized)
 		return
 	}
 
@@ -35,16 +37,16 @@ func (tc *TaskWebsocketController) HandleConnection(ws *websocket.Conn) {
 	}()
 
 	go func() {
+
 		for msg := range tc.Env.ClientChannels[userID] {
-			if err := websocket.Message.Send(ws, msg); err != nil {
+			if err := conn.WriteMessage(websocket.TextMessage, []byte(msg)); err != nil {
 				return
 			}
 		}
 	}()
 
 	for {
-		var msg string
-		if err := websocket.Message.Receive(ws, &msg); err != nil {
+		if _, _, err := conn.ReadMessage(); err != nil {
 			return
 		}
 	}

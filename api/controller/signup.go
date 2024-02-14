@@ -44,18 +44,10 @@ func (sc *SignUpController) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	signUpRequest.Password = string(encryptedPassword)
-
 	user := domain.User{
 		Name:     signUpRequest.Name,
 		Email:    signUpRequest.Email,
 		Password: signUpRequest.Password,
-	}
-
-	err = sc.SignUpUsecase.Create(ctx, &user)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
-		return
 	}
 
 	accessToken, err := sc.SignUpUsecase.CreateRefreshToken(&user, sc.Env.AccessTokenSecret, sc.Env.AccessTokenExpiry)
@@ -65,6 +57,14 @@ func (sc *SignUpController) SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	refreshToken, err := sc.SignUpUsecase.CreateRefreshToken(&user, sc.Env.RefreshTokenSecret, sc.Env.RefreshTokenExpiry)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+	user.RefreshToken = &refreshToken
+
+	err = sc.SignUpUsecase.Create(ctx, &user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})

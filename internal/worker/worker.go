@@ -15,7 +15,6 @@ func CheckDeadlines(env *bootstrap.Env, db *gorm.DB) {
 	defer ticker.Stop()
 
 	for range ticker.C {
-		fmt.Println("Checking deadlines")
 		rows, err := db.Model(&domain.Task{}).Where("completed = ?", false).Rows()
 		if err != nil {
 			log.Fatal(err)

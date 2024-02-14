@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/xorwise/golang-todo-api/api/middleware"
@@ -24,7 +23,6 @@ func (uc *UpdateUserController) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	file, handler, err := r.FormFile("avatar")
-	fmt.Println(file, handler, err)
 	if err != nil && file != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})

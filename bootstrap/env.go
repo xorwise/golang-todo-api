@@ -2,10 +2,12 @@ package bootstrap
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"sync"
 	"time"
 
+	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 )
 
@@ -20,6 +22,7 @@ type Env struct {
 	RefreshTokenSecret string
 	RefreshTokenExpiry int
 	ContextTimeout     time.Duration
+	Upgrader           websocket.Upgrader
 	ClientChannels     map[uint]chan string
 	Mu                 sync.Mutex
 }
@@ -43,6 +46,11 @@ func NewEnv() *Env {
 		ContextTimeout:     10 * time.Second,
 		ClientChannels:     make(map[uint]chan string),
 		Mu:                 sync.Mutex{},
+		Upgrader: websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
 	}
 	return env
 

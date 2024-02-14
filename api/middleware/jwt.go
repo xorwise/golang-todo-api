@@ -61,6 +61,9 @@ func (j *JWTMiddleware) LoginRequired(next http.Handler) http.Handler {
 		}
 		email := claims.Email
 
+		if r.Header.Get("Sec-Websocket-Protocol") != "" {
+			w.Header().Set("Sec-Websocket-Protocol", r.Header.Get("Sec-Websocket-Protocol"))
+		}
 		ctx := context.WithValue(r.Context(), UserIDKey, id)
 		ctx = context.WithValue(ctx, UserEmailKey, email)
 		r = r.WithContext(ctx)

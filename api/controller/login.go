@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/xorwise/golang-todo-api/bootstrap"
@@ -21,7 +20,6 @@ func (lc *LoginController) Login(w http.ResponseWriter, r *http.Request) {
 
 	var loginRequest domain.LoginRequest
 	err := json.NewDecoder(r.Body).Decode(&loginRequest)
-	fmt.Println(loginRequest)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -51,6 +49,14 @@ func (lc *LoginController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	refreshToken, err := lc.LoginUsecase.CreateRefreshToken(&user, lc.Env.RefreshTokenSecret, lc.Env.RefreshTokenExpiry)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
+		return
+	}
+
+	user.RefreshToken = &refreshToken
+	err = lc.LoginUsecase.UpdateUser(ctx, &user)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})

@@ -46,3 +46,11 @@ func (ur *userRepository) GetByEmail(c context.Context, email string) (domain.Us
 func (ur *userRepository) Update(c context.Context, user *domain.User) error {
 	return ur.db.WithContext(c).Save(user).Error
 }
+
+func (ur *userRepository) GetByRefresh(c context.Context, refreshToken string) (domain.User, error) {
+	var user domain.User
+	if err := ur.db.WithContext(c).Where("refresh_token = ?", refreshToken).First(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}

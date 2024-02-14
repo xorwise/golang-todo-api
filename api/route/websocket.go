@@ -1,6 +1,7 @@
 package route
 
 import (
+	// "fmt"
 	"net/http"
 	"time"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/xorwise/golang-todo-api/bootstrap"
 	"github.com/xorwise/golang-todo-api/repository"
 	"github.com/xorwise/golang-todo-api/usecase"
-	"golang.org/x/net/websocket"
 	"gorm.io/gorm"
 )
 
@@ -22,5 +22,5 @@ func NewTaskWebsocketRouter(env *bootstrap.Env, timeout time.Duration, db *gorm.
 		Env:         env,
 	}
 
-	mux.Handle("/ws", mw.LoginRequired(websocket.Handler(tc.HandleConnection)))
+	mux.Handle("/ws", mw.LoginRequired(http.HandlerFunc(tc.HandleConnection)))
 }

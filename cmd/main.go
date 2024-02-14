@@ -26,5 +26,5 @@ func main() {
 
 	route.Setup(env, timeout, db, mux)
 
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe("localhost:8080", mux))
 }

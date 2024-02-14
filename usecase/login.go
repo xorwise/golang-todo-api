@@ -34,3 +34,10 @@ func (lu *loginUsecase) CreateAccessToken(user *domain.User, secret string, expi
 func (lu *loginUsecase) CreateRefreshToken(user *domain.User, secret string, expiry int) (string, error) {
 	return utils.CreateRefreshToken(user, secret, expiry)
 }
+
+func (lu *loginUsecase) UpdateUser(c context.Context, user *domain.User) error {
+	ctx, cancel := context.WithTimeout(c, lu.timeout)
+	defer cancel()
+
+	return lu.userRepository.Update(ctx, user)
+}

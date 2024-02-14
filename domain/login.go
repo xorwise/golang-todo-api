@@ -16,4 +16,5 @@ type LoginUsecase interface {
 	GetUserByEmail(c context.Context, email string) (User, error)
 	CreateAccessToken(user *User, secret string, expiry int) (string, error)
 	CreateRefreshToken(user *User, secret string, expiry int) (string, error)
+	UpdateUser(c context.Context, user *User) error
 }

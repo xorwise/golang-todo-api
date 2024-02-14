@@ -2,7 +2,6 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -32,7 +31,6 @@ func (tc *CreateTaskController) Create(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(domain.ErrorResponse{Message: err.Error()})
 		return
 	}
-	fmt.Println(taskRequest)
 
 	task := &domain.Task{
 		Title:       taskRequest.Title,

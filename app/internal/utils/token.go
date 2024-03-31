@@ -7,7 +7,7 @@ import (
 	"github.com/xorwise/golang-todo-api/domain"
 )
 
-func CreateAccessToken(user *domain.User, secret string, expiry int) (accessToken string, err error) {
+func CreateAccessToken(user *domain.User, secret string, expiry int) (string, error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry))
 	claims := &domain.JwtCustomClaims{
 		Email: user.Email,
@@ -24,7 +24,7 @@ func CreateAccessToken(user *domain.User, secret string, expiry int) (accessToke
 	return t, err
 }
 
-func CreateRefreshToken(user *domain.User, secret string, expiry int) (refreshToken string, err error) {
+func CreateRefreshToken(user *domain.User, secret string, expiry int) (string, error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry))
 	claims := &domain.JwtCustomRefreshClaims{
 		ID: user.ID,
